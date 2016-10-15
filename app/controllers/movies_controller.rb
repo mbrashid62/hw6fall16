@@ -61,8 +61,20 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
   
-  def search_tmdb
-    @movies=Movie.find_in_tmdb(params[:search_terms])
+  def search_tmdb # TODO test this method
+
+    @search_term = params[:search_terms]
+    if @search_term == '' || @search_term == nil
+      flash[:notice] = 'Invalid search term'
+      redirect_to movies_path
+    else
+      @movies = Movie.find_in_tmdb(params[:search_terms])
+      flash[:notice] = "The following movies containing '#{@search_term}' were found on TMDb"
+    end
+
+
   end
+
+
 
 end
