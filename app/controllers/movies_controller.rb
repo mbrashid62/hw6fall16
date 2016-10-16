@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
 
   def movie_params
-    params.require(:movie).permit(:title, :rating, :description, :release_date)
+    params.require(:movie).permit(:title, :rating, :description, :release_date, :tmdb_movies)
   end
 
   def show
@@ -39,6 +39,7 @@ class MoviesController < ApplicationController
 
   def create
     @movie = Movie.create!(movie_params)
+    byebug
     flash[:notice] = "#{@movie.title} was successfully created."
     redirect_to movies_path
   end
@@ -61,8 +62,7 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
   
-  def search_tmdb # TODO test this method
-
+  def search_tmdb
     @search_term = params[:search_terms]
     if @search_term == '' || @search_term == nil
       flash[:notice] = 'Invalid search term'
@@ -71,10 +71,14 @@ class MoviesController < ApplicationController
       @movies = Movie.find_in_tmdb(params[:search_terms])
       flash[:notice] = "The following movies containing '#{@search_term}' were found on TMDb"
     end
-
-
   end
 
-
-
+  def add_tmdb
+    movie_ids = params[:checkbox].keys # get tmdb movie id's from params
+    movie_ids.each do |movie_id|
+      Movie.create_from_tmdb movie_id
+    end
+    flash[:notice] = 'Selected movie(s) were successfully added to the database!'
+    redirect_to movies_path
+  end
 end

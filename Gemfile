@@ -37,7 +37,8 @@ gem 'themoviedb'
 
 group :development do
    # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console' 
+  gem 'web-console'
+  gem 'meta_request'
 end
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -64,4 +65,6 @@ group :production do
   gem 'pg' # for Heroku deployment
   gem 'rails_12factor'
 end
+
+
 

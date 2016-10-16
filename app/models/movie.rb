@@ -29,7 +29,7 @@ class Movie::InvalidKeyError < StandardError ; end
          if release_date == ''
            release_date = 'TBD'
          end
-         
+
          movie_hash = {
              :tmdb_id => movie['id'],
              :rating => rating,
@@ -47,4 +47,25 @@ class Movie::InvalidKeyError < StandardError ; end
        raise Movie::InvalidKeyError, 'Invalid API key'
    end
  end
+
+  def self.create_from_tmdb(movie_id)
+    movie = Tmdb::Movie.detail(movie_id)
+    releases = Tmdb::Movie.releases(movie_id)
+    title = movie['original_title']
+    release_date = movie['release_date']
+
+    country_releases = releases['countries'] # select primary release hash from array of hashes
+    us_release = country_releases.select {|release| release['iso_3166_1'] == 'US'}
+    if us_release != nil && us_release.length != 0  && us_release[0]['certification'] != '' # check if the film was released in the US
+      rating = us_release[0]['certification'] # assign rating to local var
+    else
+      rating = 'N/A'
+    end
+    movie_params = {
+        :title => title,
+        :release_date => release_date,
+        :rating => rating
+    }
+    Movie.create!(movie_params)
+  end
 end

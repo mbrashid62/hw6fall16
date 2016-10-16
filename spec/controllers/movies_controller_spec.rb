@@ -31,7 +31,7 @@ describe MoviesController do
 
    it 'should return an array of hashes, where each element of the array is a hash containing information about the movie' do
      fake_results = [
-         {:tmdb_id=> 52,
+         {:tmdb_id => 52,
           :title => 'Ted',
           :rating =>'R',
           :release_date => '2016-10-13 00:00:00'
@@ -49,12 +49,24 @@ describe MoviesController do
    end
 
 
-   # it 'should check for invalid search terms' do
-   #   fake_results = [double('Movie'), double('Movie')]
-   #   allow(Movie).to receive(:find_in_tmdb).and_return (fake_results) # stub out find_in_tmdb method of Model Movie
-   #   post :search_tmdb, {:search_terms => ''}
-   #   expect(response).to render_template('movies')
-   # end
+   it 'should check for invalid search terms' do
+     fake_results = [double('Movie'), double('Movie')]
+     allow(Movie).to receive(:find_in_tmdb).and_return (fake_results) # stub out find_in_tmdb method of Model Movie
+     post :search_tmdb, {:search_terms => ''}
+     expect(response).to redirect_to('/movies')
+   end
+  end
 
+  describe 'adding TMDb' do
+    it 'should call the model method that adds the movie to the db for each added movie' do
+      expect(Movie).to receive(:create_from_tmdb).with('72105')
+      expect(Movie).to receive(:create_from_tmdb).with('214756')
+      post :add_tmdb, {:checkbox => {'72105':'1','214756':'1'}}
+
+    end
+    it 'should redirect to the movies view after adding movies to the db' do
+       post :add_tmdb, {:checkbox => {'72105':'1','214756':'1'}}
+       expect(response).to redirect_to('/movies')
+    end
   end
 end

@@ -14,12 +14,27 @@ describe Movie do
       end
     end
 
+
     # context 'with invalid key' do
     #   it 'should raise InvalidKeyError if key is missing or invalid' do
-    #     allow(Tmdb::Movie).to receive(:find).and_raise(Tmdb::InvalidApiKeyError)
+    #     # search = Tmdb::Search.new
+    #     allow(Tmdb::Search.new).to receive(:fetch).and_raise(Tmdb::InvalidApiKeyError)
     #     expect {Movie.find_in_tmdb('Batman') }.to raise_error(Movie::InvalidKeyError)
     #   end
     # end
+  end
+
+  describe 'creating movie by selection' do
+    it 'should call create method' do
+      # movie_params = {
+      #     :title => 'Ted',
+      #     :rating =>'R',
+      #     :release_date => '2012-06-29 00:00:00 UTC'
+      # }
+      #
+      # allow(Movie).to receive(:create_from_tmdb).with('72105')
+      # expect(Movie).to receive(:create).with(movie_params)
+    end
   end
 end
 
