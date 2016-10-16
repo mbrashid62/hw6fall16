@@ -39,7 +39,6 @@ class MoviesController < ApplicationController
 
   def create
     @movie = Movie.create!(movie_params)
-    byebug
     flash[:notice] = "#{@movie.title} was successfully created."
     redirect_to movies_path
   end
@@ -69,16 +68,26 @@ class MoviesController < ApplicationController
       redirect_to movies_path
     else
       @movies = Movie.find_in_tmdb(params[:search_terms])
-      flash[:notice] = "The following movies containing '#{@search_term}' were found on TMDb"
+      if @movies.length == 0
+        flash[:notice] = 'No matching movies were found on Tmdb'
+        redirect_to movies_path
+      else
+        flash[:notice] = "The following movies containing '#{@search_term}' were found on TMDb"
+      end
     end
   end
 
   def add_tmdb
-    movie_ids = params[:checkbox].keys # get tmdb movie id's from params
-    movie_ids.each do |movie_id|
-      Movie.create_from_tmdb movie_id
+    if params[:checkbox] == nil # if no movies selected
+      flash[:notice] = 'No movies selected'
+      redirect_to movies_path
+    else
+      movie_ids = params[:checkbox].keys # get tmdb movie id's from params
+      movie_ids.each do |movie_id|
+        Movie.create_from_tmdb movie_id
+      end
+      flash[:notice] = 'Movies successfully added to Rotten Potatoes'
+      redirect_to movies_path
     end
-    flash[:notice] = 'Selected movie(s) were successfully added to the database!'
-    redirect_to movies_path
   end
 end
